@@ -3,7 +3,7 @@ import { createId } from '@paralleldrive/cuid2'
 import { users } from './users'
 import { relations } from 'drizzle-orm'
 import { restaurants } from './restaurants'
-import { ordersItems } from './order-items'
+import { orderItems } from './order-items'
 
 export const orderStatusEnum = pgEnum('order_status', [
   'pending',
@@ -24,7 +24,7 @@ export const orders = pgTable('orders', {
     }),
   restaurantId: text('restaurant_id')
     .notNull()
-    .references(() => users.id, {
+    .references(() => restaurants.id, {
       onDelete: 'cascade',
     }),
   status: orderStatusEnum('status').default('pending').notNull(),
@@ -44,6 +44,6 @@ export const ordersRelations = relations(orders, ({ one, many }) => {
       references: [restaurants.id],
       relationName: 'order_restaurant',
     }),
-    ordersItems: many(ordersItems),
+    ordersItems: many(orderItems),
   }
 })

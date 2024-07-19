@@ -1,11 +1,10 @@
 import { integer, pgTable, text } from 'drizzle-orm/pg-core'
 import { createId } from '@paralleldrive/cuid2'
 import { orders } from './orders'
-import { users } from './users'
 import { relations } from 'drizzle-orm'
 import { products } from './products'
 
-export const ordersItems = pgTable('orders_items', {
+export const orderItems = pgTable('order_items', {
   id: text('id')
     .$defaultFn(() => createId())
     .primaryKey(),
@@ -16,22 +15,22 @@ export const ordersItems = pgTable('orders_items', {
     }),
   productId: text('product_id')
     .notNull()
-    .references(() => users.id, {
+    .references(() => products.id, {
       onDelete: 'set null',
     }),
   priceInCents: integer('price_in_cents').notNull(),
   quantity: integer('created_at').notNull(),
 })
 
-export const ordersItemsRelations = relations(ordersItems, ({ one }) => {
+export const ordersItemsRelations = relations(orderItems, ({ one }) => {
   return {
     order: one(orders, {
-      fields: [ordersItems.orderId],
+      fields: [orderItems.orderId],
       references: [orders.id],
       relationName: 'order_item_order',
     }),
     product: one(products, {
-      fields: [ordersItems.productId],
+      fields: [orderItems.productId],
       references: [products.id],
       relationName: 'order_item_product',
     }),
